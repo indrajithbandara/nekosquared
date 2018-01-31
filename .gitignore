@@ -16,3 +16,6 @@ __pycache__
 
 # Nano temp files.
 *.sav
+
+# Stuff pip puts in that I don't want
+*.egg-info
