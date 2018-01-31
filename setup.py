@@ -13,8 +13,7 @@ import subprocess   # Invoking git to inspect the commits.
 import sys          # Accessing the stderr stream.
 
 
-ENG_DIR = 'neko2engine'
-COG_DIR = 'neko2cogs'
+PKG = 'nekosquared'
 GIT_DIR = '.git'
 DEPENDENCIES_FILE = 'dependencies.txt'
 NON_PYPI_DEPENDENCIES_FILE = 'nppdeps.txt'
@@ -26,7 +25,7 @@ NON_PYPI_DEPENDENCIES_FILE = 'nppdeps.txt'
 ###############################################################################
 
 
-MAIN_INIT_FILE = os.path.join(ENG_DIR, '__init__.py')
+MAIN_INIT_FILE = os.path.join(nekosquared, '__init__.py')
 
 
 with open(MAIN_INIT_FILE) as init:
@@ -152,9 +151,8 @@ def recurse(p):
     return tuple(results)
 
 # Calculate all packages to get.
-attrs['packages'] = []
-for node in (ENG_DIR, COG_DIR):
-    attrs['packages'].extend(recurse(node))
+attrs['name'] = PKG
+attrs['packages'] = recurse(PKG)
 
 print('>Installing the following packages:', 
       *attrs['packages'],
