@@ -1,0 +1,18 @@
+# Python cache.
+__pycache__
+**/__pycache__
+
+# IntelliJ stuff.
+*.iml
+.idea
+
+# Log files.
+*.log
+**/*.log
+
+# Any form of cfg file
+*.cfg
+**/*.cfg
+
+# Nano temp files.
+*.sav
