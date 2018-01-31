@@ -25,7 +25,7 @@ NON_PYPI_DEPENDENCIES_FILE = 'nppdeps.txt'
 ###############################################################################
 
 
-MAIN_INIT_FILE = os.path.join(nekosquared, '__init__.py')
+MAIN_INIT_FILE = os.path.join(PKG, '__init__.py')
 
 
 with open(MAIN_INIT_FILE) as init:
