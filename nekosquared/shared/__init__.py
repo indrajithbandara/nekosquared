@@ -1,0 +1,3 @@
+"""
+Shared pieces of code.
+"""

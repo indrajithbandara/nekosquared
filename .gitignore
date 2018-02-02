@@ -6,6 +6,9 @@ __pycache__
 *.iml
 .idea
 
+# Virtual environments
+venv
+
 # Log files.
 *.log
 **/*.log
