@@ -10,6 +10,14 @@ python3.6 -m pip install git+https://github.com/espeonageon/nekosquared
 
 Run this in a `venv` for best results.
 
+## The config files
+
+This bot looks in the current working directory for a directory called `config`.
+It will look in here for any configuration files that are needed. These
+configuration files may be in INI, JSON or YAML format, depending on the most
+appropriate implementation. Example config files can be found in the `ex-config`
+directory of this repository.
+
 ## Why don't you use `aiohttp` and `asyncpg`? They are faster!
 
 This bot is designed to be as modular as possible. Each cog I design will

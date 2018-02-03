@@ -1,3 +1,3 @@
 """
-Shared pieces of code.
+Shared pieces of code between cogs and
 """

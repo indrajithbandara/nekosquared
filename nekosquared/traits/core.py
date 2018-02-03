@@ -7,35 +7,7 @@ import inspect
 from nekosquared.shared import alg
 
 
-class BaseTraitMeta(type, abc.ABCMeta):
-    """
-    Metaclass for traits. This just overloads some of the builtin methods
-    and defines empty slots.
-    """
-    __slots__ = ()
-
-    @property
-    def cls_name(cls):
-        return cls.__name__
-
-    def __str__(cls):
-        return f'{cls.cls_name} class defn'
-
-    def __repr__(cls):
-        mcs = __class__
-        # noinspection PyBroadException
-        try:
-            file = inspect.getfile(cls)
-        except TypeError:
-            file = None
-        finally:
-            if not file:
-                file = 'UNKNOWN'
-
-        return f'<{cls.cls_name} defn mcs={mcs.__name__!r} file={file!r}>'
-
-
-class BaseTrait(metaclass=BaseTraitMeta):
+class BaseTrait(abc.ABC):
     """
     Base class for traits to implement. This does not implement ``__slots__``
     as cached properties require that a class have a dict implementation
@@ -50,8 +22,10 @@ class BaseTrait(metaclass=BaseTraitMeta):
 
     NOTE: you must NOT call ``super`` in this magic method to invoke a parent
     implementation.
+
+    ALSO NOTE: This should be the first argument in the list of classes to
+    derive from.
     """
-    __slots__ = ('__base_traits__',)
 
     def __init_subclass__(cls, **kwargs):
         """
@@ -59,11 +33,10 @@ class BaseTrait(metaclass=BaseTraitMeta):
         call it.
         :param kwargs: keyword arguments.
         """
-        init = alg.find(lambda m: getattr(m, '__name__') == '__init_class__',
+        init = alg.find(lambda m: getattr(m[1], '__name__') == '__init_class__',
                         inspect.getmembers(cls, inspect.ismethod))
-
         if init:
-            init(**kwargs)
+            init[1](**kwargs)
 
         # Get the base traits
         cls.__base_traits__ = {
@@ -73,6 +46,8 @@ class BaseTrait(metaclass=BaseTraitMeta):
             )
         }
 
+        super().__init_subclass__()
+
     @property
     def cls_name(self):
         return type(self).cls_name
@@ -81,11 +56,12 @@ class BaseTrait(metaclass=BaseTraitMeta):
         return f'{self.cls_name} class inst'
 
     def __repr__(self):
+        file = None
         # noinspection PyBroadException
         try:
             file = inspect.getfile(type(self))
         except TypeError:
-            file = None
+            pass
         finally:
             if not file:
                 file = 'UNKNOWN'

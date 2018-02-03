@@ -1,7 +1,5 @@
 """
-Implementation of the Neko² bot engine. This uses Discord.py's
-rewrite extensively underneath, as well as other libraries such
-as Aiohttp.
+Implementation of the Neko² bot engine.
 """
 
 # Note that any fields single quoted are accessed by setup.py. To
@@ -10,9 +8,11 @@ as Aiohttp.
 __author__ = 'Espeonageon'
 __license__ = 'Mozilla Public License Version 2.0'
 __url__ = 'https://github.com/espeonageon/nekosquared'
-# Use two-digit versioning. The patch is automatically applied by 
-# setup.py when updating the bot. See setup.py for explaination.
+# Use two-digit version codes. The patch is automatically applied by
+# setup.py when updating the bot. See setup.py for explanation.
 __version__ = '0.0'
 
 __repository__ = __url__
+
+# TODO: fetch list using GitHub API.
 __contributors__ = (__author__,)

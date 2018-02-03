@@ -1,3 +1,4 @@
+#!/usr/bin/env python3.6
 """
 Installation script. Full of anger, hate and angry comments from where stuff
 should have been simple, but wasn't.
@@ -13,10 +14,12 @@ import subprocess   # Invoking git to inspect the commits.
 import sys          # Accessing the stderr stream.
 
 
+import dependencies
+
+
 PKG = 'nekosquared'
 GIT_DIR = '.git'
-DEPENDENCIES_FILE = 'dependencies.txt'
-NON_PYPI_DEPENDENCIES_FILE = 'nppdeps.txt'
+
 
 ###############################################################################
 #                                                                             #
@@ -29,7 +32,8 @@ MAIN_INIT_FILE = os.path.join(PKG, '__init__.py')
 
 
 with open(MAIN_INIT_FILE) as init:
-    attrs = { 
+    # noinspection PyTypeChecker
+    attrs = {
         k: v for k, v in re.findall(
             r'__(\w+)__\s?=\s?\'([^\']*)\'',
             '\n'.join(filter(bool, init.read().split('\n')))
@@ -51,7 +55,7 @@ version += '.'
 # will only update the bot if it has had any new commits since then.
 git_loc = shutil.which('git')
 if git_loc and os.path.isdir(GIT_DIR):
-    commits = subprocess.check_output(
+    commits: str = subprocess.check_output(
         [git_loc, 'log', '--oneline'],
         universal_newlines=True
     )
@@ -69,19 +73,7 @@ else:
 print(f'>Installing version {version} of Neko².',
       file=sys.stderr, end='\n\n')
 
-with open(DEPENDENCIES_FILE) as dependencies:
-    dependencies = dependencies.read().split('\n')
-    dependencies = filter(bool, dependencies)
-
-
-print('>Will get the following dependencies from PyPI:', 
-      *dependencies,
-      sep='\n •  ',
-      file=sys.stderr,
-      end='\n\n')
-
 attrs['version'] = version
-attrs['install_requires'] = dependencies
 
 ###############################################################################
 #                                                                             #
@@ -108,13 +100,17 @@ attrs['install_requires'] = dependencies
 
 # - https://github.com/Rapptz/discord.py/issues/946
 #
-# - https://python-packaging.readthedocs.io/en/latest/dependencies.html#packages-not-on-pypi
+# - https://python-packaging.readthedocs.io/en/latest/
+#           dependencies.html#packages-not-on-pypi
+
 #     Sometimes you’ll want to use packages that are properly arranged with 
 #     setuptools, but aren’t published to PyPI.
 #
 # - https://github.com/pypa/pip/issues/3610
 # 
-# - http://setuptools.readthedocs.io/en/latest/setuptools.html#dependencies-that-aren-t-in-pypi
+# - http://setuptools.readthedocs.io/en/latest/setuptools.html
+#           #dependencies-that-aren-t-in-pypi
+
 #     Dependency links are still not deprecated. BUT WAIT. THE COMMAND FLAG
 #     TO ENABLE THEM IS! O_O
 #
@@ -130,18 +126,15 @@ attrs['install_requires'] = dependencies
 # I have done my homework. I have a good reason to be annoyed about this.
 
 
-with open(NON_PYPI_DEPENDENCIES_FILE) as non_pypi_deps:
-    non_pypi_deps = non_pypi_deps.read().split('\n')
-    non_pypi_deps = filter(bool, non_pypi_deps)
-
-print('>Will get the following extra dependencies:', 
-      *non_pypi_deps,
+print('>Will get the following dependencies:',
+      *dependencies.dependencies,
       sep='\n •  ',
       file=sys.stderr,
       end='\n\n')
 
-for non_pypi_dep in non_pypi_deps:
-    pip.main(['install', non_pypi_dep])
+# Causes less problems in the long run.
+pip.main(['install', *dependencies.dependencies])
+
 
 # Detect the packages to store
 def recurse(p):
@@ -149,6 +142,7 @@ def recurse(p):
     for parent, dirs, _ in os.walk(p):
         results.extend(os.path.join(parent, _dir) for _dir in dirs)
     return tuple(results)
+
 
 # Calculate all packages to get.
 attrs['name'] = PKG
