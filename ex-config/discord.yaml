@@ -1,0 +1,8 @@
+---
+auth:
+    client_id: Your client snowflake here
+    token: 'Your token here'
+
+bot:
+    command_prefix: 'n2'
+    owner_id: Your owner ID here
