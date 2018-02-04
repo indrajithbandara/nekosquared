@@ -1,5 +1,5 @@
 aiofiles
+aiohttp
+asyncpg
 cached_property
-psycopg2
-requests
 pyyaml

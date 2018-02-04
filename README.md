@@ -18,23 +18,6 @@ configuration files may be in INI, JSON or YAML format, depending on the most
 appropriate implementation. Example config files can be found in the `ex-config`
 directory of this repository.
 
-## Why don't you use `aiohttp` and `asyncpg`? They are faster!
-
-This bot is designed to be as modular as possible. Each cog I design will
-implement specific traits that are injected by using object orientation
-design patterns. Unfortunately, Python does not support initialising objects
-with async-marked `__init__` methods, and likewise, discord.py does not
-support an asynchronous `__unload` function definition. It is therefore
-messy and difficult to initialise objects that should be initialised from
-an async context in a standard procedural method when it is a requirement
-that the asynchronous operation be completed before proceeding. For this
-reason, managing a set of threads in a pool for each trait that implements
-blocking behaviour is easier. Unless the bot suddenly becomes used widely,
-the performance impact of doing this is negligible. If the latter did
-occur, I probably would be looking for somewhere else to host the script
-rather than a Raspberry Pi 3 B with a wireless network connection to a
-slow rural internet connection!
-
 ## Brought to you by...
 
 This project uses multiple existing dependencies to make life a bit easier and

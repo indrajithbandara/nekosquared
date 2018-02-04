@@ -31,7 +31,7 @@ class ConfigFile:
             If unspecified, we try to autodetect the serializer to use.
             The deserializer must accept one argument and this must be a file
             pointer to read from. Currently supported serializers for
-            auto-detection are ``.json``, ``.yaml`` and ``.ini``.
+            auto-detection are ``.json`` and ``.yaml``
     """
     def __init__(self, path, *, deserializer=None):
         if deserializer is None:
@@ -41,9 +41,6 @@ class ConfigFile:
             elif path.endswith('.yaml'):
                 import yaml
                 deserializer = yaml.load
-            elif path.endswith('.ini'):
-                from nekosquared.shared import ini
-                deserializer = ini.load
             else:
                 raise ModuleNotFoundError('Could not detect deserializer to '
                                           f'use for {path}')

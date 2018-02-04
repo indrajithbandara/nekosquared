@@ -8,28 +8,33 @@ import traceback
 import cached_property
 from discord.ext import commands
 
-from nekosquared.traits import core
-from nekosquared.traits import loggable
+from nekosquared.shared import traits
+
+from . import shutdown
 
 
 # Sue me.
 BotInterrupt = KeyboardInterrupt
 
 
-class Bot(core.BaseTrait, commands.Bot, loggable.Scribe):
+class Bot(commands.Bot, traits.Scribe):
     """
     My implementation of the Discord.py bot.
 
-    This accepts a dict with two sub-dictionaries:
 
-    - ``auth`` - this must contain a ``token`` and a ``client_id`` member.
+    :param bot_config:
+        This accepts a dict with two sub-dictionaries:
+        - ``auth`` - this must contain a ``token`` and a ``client_id`` member.
+        - ``bot`` - this contains a group of kwargs to pass to the Discord.py
+            Bot constructor.
     """
 
-    def __init__(self, bot_config: dict):
+    def __init__(self,
+                 bot_config: dict):
         """
         Initialise the bot using the given configuration.
         """
-        super().__init__(**bot_config.pop('bot', {}))
+        commands.Bot.__init__(self, **bot_config.pop('bot', {}))
 
         try:
             auth = bot_config['auth']
@@ -100,6 +105,7 @@ class Bot(core.BaseTrait, commands.Bot, loggable.Scribe):
                 traceback.print_exc()
 
         await super().logout()
+
         self._logged_in = False
 
     # noinspection PyBroadException
@@ -156,11 +162,11 @@ class Bot(core.BaseTrait, commands.Bot, loggable.Scribe):
         finally:
             try:
                 if self._logged_in:
-                    self.logger.info(
-                        'Now unloading. Send a second signal to terminate now')
                     self.loop.run_until_complete(self.logout())
-                else:
-                    self.logger.info('Everything was already tidy...')
+
+                # Executes all shutdown callbacks to deallocate database
+                # and HTTP socket resources, etc.
+                self.loop.run_until_complete(shutdown.terminate())
             except BotInterrupt:
                 self.logger.fatal('Giving up all hope of a safe exit')
             except BaseException:
